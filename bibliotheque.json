@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "id": 1,
+        "titre": "professeur aux moeurs legere",
+        "auteur": "Fopa Mentoh Lesley"
+    },
+    {
+        "id": 3,
+        "titre": "joyce la plus belle",
+        "auteur": "Fopa Lesley"
+    },
+    {
+        "id": 1927,
+        "titre": "princesses",
+        "auteur": "dorel"
+    },
+    {
+        "id": 1971,
+        "titre": "les rituesl de koka",
+        "auteur": "marshall"
+    }
+]

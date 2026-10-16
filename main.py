@@ -3,9 +3,10 @@
 
 import json
 import os
+import random
 
 bibliotheque = []
-prochain_id = 1
+prochain_id = random.randint(1000, 1999)
 
 
 def sauvegarder_livres():
@@ -30,8 +31,10 @@ def charger_livres():
         bibliotheque.clear()
         bibliotheque.extend(livres_charges)
 
-        if bibliotheque:
-            prochain_id = max(livre["id"] for livre in bibliotheque) + 1
+        for livre in bibliotheque:
+            if livre[id] == prochain_id:
+                prochain_id = random.randint(1000, 1999)
+           # prochain_id = max(livre["id"] for livre in bibliotheque) + 1
 
     except (json.JSONDecodeError, OSError, KeyError, TypeError):
         print("Erreur lors du chargement des livres.")
@@ -63,7 +66,7 @@ def ajouter_livre():
     }
 
     bibliotheque.append(livre)
-    prochain_id += 1
+    prochain_id =  random.randint(1000, 1999)
     sauvegarder_livres()
 
     print("Livre ajouté avec succès !")
