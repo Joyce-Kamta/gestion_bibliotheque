@@ -1,163 +1,76 @@
-
-# Application console de gestion de bibliothèque
-
-import json
-import os
-import random
-
-bibliotheque = []
-prochain_id = random.randint(1000, 1999)
-
-
-def sauvegarder_livres():
-    with open("bibliotheque.json", "w", encoding="utf-8") as fichier:
-        json.dump(bibliotheque, fichier, ensure_ascii=False, indent=4)
-
-
-def charger_livres():
-    global prochain_id
-
-    if not os.path.exists("bibliotheque.json"):
-        return
-
-    try:
-        with open("bibliotheque.json", "r", encoding="utf-8") as fichier:
-            livres_charges = json.load(fichier)
-
-        if not isinstance(livres_charges, list):
-            print("Erreur : le fichier JSON ne contient pas une liste.")
-            return
-
-        bibliotheque.clear()
-        bibliotheque.extend(livres_charges)
-
-        for livre in bibliotheque:
-            if livre[id] == prochain_id:
-                prochain_id = random.randint(1000, 1999)
-           # prochain_id = max(livre["id"] for livre in bibliotheque) + 1
-
-    except (json.JSONDecodeError, OSError, KeyError, TypeError):
-        print("Erreur lors du chargement des livres.")
+from livres import (
+    afficher_livres,
+    ajouter_livre,
+    rechercher_livre,
+    supprimer_livre
+)
 
 
 def afficher_menu():
     print("\n===== GESTION DE BIBLIOTHÈQUE =====")
-    print("1. Ajouter un livre")
-    print("2. Afficher tous les livres")
+    print("1. Afficher tous les livres")
+    print("2. Ajouter un livre")
     print("3. Rechercher un livre")
     print("4. Supprimer un livre")
     print("5. Quitter")
 
 
-def ajouter_livre():
-    global prochain_id
+def main():
 
-    titre = input("Titre du livre : ").strip()
-    auteur = input("Nom de l'auteur : ").strip()
+    while True:
+        afficher_menu()
 
-    if titre == "" or auteur == "":
-        print("Erreur : le titre et l'auteur sont obligatoires.")
-        return
+        choix = input("\nVotre choix : ")
 
-    livre = {
-        "id": prochain_id,
-        "titre": titre,
-        "auteur": auteur
-    }
+        if choix == "1":
+            afficher_livres()
 
-    bibliotheque.append(livre)
-    prochain_id =  random.randint(1000, 1999)
-    sauvegarder_livres()
+        elif choix == "2":
+         titre = input("Titre du livre : ").strip()
+         auteur = input("Nom de l'auteur : ").strip()
 
-    print("Livre ajouté avec succès !")
+         if not titre or not auteur:
+            print("Erreur : le titre et l'auteur sont obligatoires.")
+            continue
 
+         try:
+             
+             annee = int(input("Année de publication : "))
 
-def afficher_livres():
-    if len(bibliotheque) == 0:
-        print("La bibliothèque est vide.")
-        return
+             if annee <= 0 or annee > 2026:
+                 print("Erreur : veuillez saisir une année valide.")
+                 continue
 
-    print("\n===== LISTE DES LIVRES =====")
+         except ValueError:
+             print("Erreur : l'année doit être un nombre entier.")
+             continue
 
-    for livre in bibliotheque:
-        print(f"ID : {livre['id']}")
-        print(f"Titre : {livre['titre']}")
-        print(f"Auteur : {livre['auteur']}")
-        print("----------------------------")
+         ajouter_livre(titre, auteur, annee)
 
+        elif choix == "3":
+            titre = input("Titre à rechercher : ").strip
+            if not titre:
+               print("Erreur : veuillez saisir un titre.")
+               continue
+              
+            rechercher_livre(titre)
 
-def rechercher_livre():
-    recherche = input("Saisis un titre ou un auteur : ").strip().lower()
+        elif choix == "4":
+            try:
+               
+              id_livre = int(input("Identifiant du livre à supprimer : "))
+              supprimer_livre(id_livre)
 
-    if recherche == "":
-        print("La recherche ne peut pas être vide.")
-        return
+            except ValueError:
+              print("Erreur : veuillez saisir un identifiant numérique.")
 
-    resultats = []
+        elif choix == "5":
+            print("Au revoir !")
+            break
 
-    for livre in bibliotheque:
-        if (
-            recherche in livre["titre"].lower()
-            or recherche in livre["auteur"].lower()
-        ):
-            resultats.append(livre)
-
-    if len(resultats) == 0:
-        print("Aucun livre trouvé.")
-    else:
-        print("\n===== RÉSULTATS DE LA RECHERCHE =====")
-
-        for livre in resultats:
-            print(
-                f"ID : {livre['id']} | "
-                f"Titre : {livre['titre']} | "
-                f"Auteur : {livre['auteur']}"
-            )
+        else:
+            print("Choix invalide. Réessayez.")
 
 
-def supprimer_livre():
-    afficher_livres()
-
-    if len(bibliotheque) == 0:
-        return
-
-    try:
-        identifiant = int(input("ID du livre à supprimer : "))
-    except ValueError:
-        print("Erreur : saisis un numéro valide.")
-        return
-
-    for livre in bibliotheque:
-        if livre["id"] == identifiant:
-            bibliotheque.remove(livre)
-            sauvegarder_livres()
-            print("Livre supprimé avec succès !")
-            return
-
-    print("Aucun livre ne correspond à cet ID.")
-
-charger_livres()
-
-while True:
-    afficher_menu()
-
-    choix = input("Votre choix : ").strip()
-
-    if choix == "1":
-        ajouter_livre()
-
-    elif choix == "2":
-        afficher_livres()
-
-    elif choix == "3":
-        rechercher_livre()
-
-    elif choix == "4":
-        supprimer_livre()
-
-    elif choix == "5":
-        print("Merci d'avoir utilisé la bibliothèque. Au revoir !")
-        break
-
-    else:
-        print("Choix invalide. Saisis un nombre entre 1 et 5.")
+if __name__ == "__main__":
+    main()
